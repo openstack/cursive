@@ -1,7 +1,10 @@
 - project:
+    templates:
+      - openstack-python3-wallaby-jobs
+      - check-requirements
     check:
       jobs:
-        - barbican-simple-crypto-devstack-tempest-cursive
+        - barbican-tempest-plugin-simple-crypto-cursive
     gate:
       jobs:
-        - barbican-simple-crypto-devstack-tempest-cursive
+        - barbican-tempest-plugin-simple-crypto-cursive

@@ -334,7 +334,7 @@ def get_certificate(context, signature_certificate_uuid):
     try:
         # The certificate retrieved here is a castellan certificate object
         cert = keymgr_api.get(context, signature_certificate_uuid)
-    except ManagedObjectNotFoundError as e:
+    except ManagedObjectNotFoundError as e:  # noqa: F841
         raise exception.SignatureVerificationError(
             reason=_('Certificate not found with ID: %s')
             % signature_certificate_uuid)

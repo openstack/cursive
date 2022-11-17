@@ -21,6 +21,8 @@ from oslo_utils import timeutils
 
 from cursive import exception
 from cursive import signature_utils
+from cursive import verifiers
+
 
 LOG = logging.getLogger(__name__)
 
@@ -135,16 +137,19 @@ def verify_certificate_signature(signing_certificate, certificate):
     signer_public_key = signing_certificate.public_key()
 
     if isinstance(signer_public_key, rsa.RSAPublicKey):
-        verifier = signer_public_key.verifier(
-            signature_bytes, padding.PKCS1v15(), signature_hash_algorithm
+        verifier = verifiers.RSAVerifier(
+            signature_bytes, signature_hash_algorithm,
+            signer_public_key, padding.PKCS1v15(),
         )
     elif isinstance(signer_public_key, ec.EllipticCurvePublicKey):
-        verifier = signer_public_key.verifier(
-            signature_bytes, ec.ECDSA(signature_hash_algorithm)
+        verifier = verifiers.ECCVerifier(
+            signature_bytes, signature_hash_algorithm,
+            signer_public_key,
         )
     else:
-        verifier = signer_public_key.verifier(
-            signature_bytes, signature_hash_algorithm
+        verifier = verifiers.DSAVerifier(
+            signature_bytes, signature_hash_algorithm,
+            signer_public_key,
         )
 
     verifier.update(certificate.tbs_certificate_bytes)

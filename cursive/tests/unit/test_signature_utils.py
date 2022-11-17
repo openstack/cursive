@@ -145,15 +145,15 @@ class TestSignatureUtils(base.TestCase):
         data = b'224626ae19824466f2a7f39ab7b80f7f'
         mock_get_pub_key.return_value = TEST_RSA_PRIVATE_KEY.public_key()
         for hash_name, hash_alg in signature_utils.HASH_METHODS.items():
-            signer = TEST_RSA_PRIVATE_KEY.signer(
+            sig = TEST_RSA_PRIVATE_KEY.sign(
+                data,
                 padding.PSS(
                     mgf=padding.MGF1(hash_alg),
                     salt_length=padding.PSS.MAX_LENGTH
                 ),
                 hash_alg
             )
-            signer.update(data)
-            signature = base64.b64encode(signer.finalize())
+            signature = base64.b64encode(sig)
             img_sig_cert_uuid = 'fea14bc2-d75f-4ba5-bccc-b5c924ad0693'
             verifier = signature_utils.get_verifier(None, img_sig_cert_uuid,
                                                     hash_name, signature,
@@ -179,11 +179,11 @@ class TestSignatureUtils(base.TestCase):
                                                   default_backend())
             mock_get_pub_key.return_value = private_key.public_key()
             for hash_name, hash_alg in signature_utils.HASH_METHODS.items():
-                signer = private_key.signer(
+                sig = private_key.sign(
+                    data,
                     ec.ECDSA(hash_alg)
                 )
-                signer.update(data)
-                signature = base64.b64encode(signer.finalize())
+                signature = base64.b64encode(sig)
                 img_sig_cert_uuid = 'fea14bc2-d75f-4ba5-bccc-b5c924ad0693'
                 verifier = signature_utils.get_verifier(None,
                                                         img_sig_cert_uuid,
@@ -197,11 +197,11 @@ class TestSignatureUtils(base.TestCase):
         data = b'224626ae19824466f2a7f39ab7b80f7f'
         mock_get_pub_key.return_value = TEST_DSA_PRIVATE_KEY.public_key()
         for hash_name, hash_alg in signature_utils.HASH_METHODS.items():
-            signer = TEST_DSA_PRIVATE_KEY.signer(
+            sig = TEST_DSA_PRIVATE_KEY.sign(
+                data,
                 hash_alg
             )
-            signer.update(data)
-            signature = base64.b64encode(signer.finalize())
+            signature = base64.b64encode(sig)
             img_sig_cert_uuid = 'fea14bc2-d75f-4ba5-bccc-b5c924ad0693'
             verifier = signature_utils.get_verifier(None, img_sig_cert_uuid,
                                                     hash_name, signature,

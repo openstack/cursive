@@ -276,6 +276,6 @@ texinfo_documents = [
 locale_dirs = ['locale/']
 
 # openstackdocstheme options
-repository_name = 'openstack/cursive'
+repository_name = 'x/cursive'
 bug_project = 'cursive'
 bug_tag = 'docs'

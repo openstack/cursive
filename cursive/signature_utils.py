@@ -26,7 +26,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography import x509
 from oslo_log import log as logging
 from oslo_serialization import base64
-from oslo_utils import encodeutils
 
 from cursive import exception
 from cursive.i18n import _, _LE
@@ -365,7 +364,7 @@ def get_certificate(context, signature_certificate_uuid):
         # backends here, the generic "Exception" is used.
         msg = _LE("Unable to retrieve certificate with ID %(id)s: %(e)s") % {
             'id': signature_certificate_uuid,
-            'e': encodeutils.exception_to_unicode(e),
+            'e': str(e),
         }
         LOG.error(msg)
         raise exception.SignatureVerificationError(

@@ -86,23 +86,27 @@ class FakeCryptoCertificate:
     def __init__(
         self,
         pub_key=TEST_RSA_PRIVATE_KEY.public_key(),
-        not_valid_before=(timeutils.utcnow() - datetime.timedelta(hours=1)),
-        not_valid_after=(timeutils.utcnow() + datetime.timedelta(hours=2)),
+        not_valid_before_utc=(
+            timeutils.utcnow(True) - datetime.timedelta(hours=1)
+        ),
+        not_valid_after_utc=(
+            timeutils.utcnow(True) + datetime.timedelta(hours=2)
+        ),
     ):
         self.pub_key = pub_key
-        self.cert_not_valid_before = not_valid_before
-        self.cert_not_valid_after = not_valid_after
+        self.cert_not_valid_before_utc = not_valid_before_utc
+        self.cert_not_valid_after_utc = not_valid_after_utc
 
     def public_key(self):
         return self.pub_key
 
     @property
-    def not_valid_before(self):
-        return self.cert_not_valid_before
+    def not_valid_before_utc(self):
+        return self.cert_not_valid_before_utc
 
     @property
-    def not_valid_after(self):
-        return self.cert_not_valid_after
+    def not_valid_after_utc(self):
+        return self.cert_not_valid_after_utc
 
 
 class TestSignatureUtils(base.TestCase):

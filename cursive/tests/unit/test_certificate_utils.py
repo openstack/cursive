@@ -66,7 +66,9 @@ class TestCertificateUtils(base.TestCase):
     def test_is_within_valid_dates(self, mock_utcnow):
         # Verify a certificate is valid at a time within its valid date range
         cert = self.load_certificate('self_signed_cert.pem')
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         result = certificate_utils.is_within_valid_dates(cert)
         self.assertEqual(True, result)
 
@@ -74,7 +76,9 @@ class TestCertificateUtils(base.TestCase):
     def test_is_before_valid_dates(self, mock_utcnow):
         # Verify a certificate is invalid at a time before its valid date range
         cert = self.load_certificate('self_signed_cert.pem')
-        mock_utcnow.return_value = datetime.datetime(2000, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2000, 1, 1, tzinfo=datetime.UTC
+        )
         result = certificate_utils.is_within_valid_dates(cert)
         self.assertEqual(False, result)
 
@@ -82,7 +86,9 @@ class TestCertificateUtils(base.TestCase):
     def test_is_after_valid_dates(self, mock_utcnow):
         # Verify a certificate is invalid at a time after its valid date range
         cert = self.load_certificate('self_signed_cert.pem')
-        mock_utcnow.return_value = datetime.datetime(2100, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2100, 1, 1, tzinfo=datetime.UTC
+        )
         result = certificate_utils.is_within_valid_dates(cert)
         self.assertEqual(False, result)
 
@@ -152,7 +158,9 @@ class TestCertificateUtils(base.TestCase):
     @mock.patch('cursive.signature_utils.get_certificate')
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_verify_valid_certificate(self, mock_utcnow, mock_get_cert):
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der', 'signed_cert.pem']
         )
@@ -166,7 +174,9 @@ class TestCertificateUtils(base.TestCase):
     @mock.patch('cursive.signature_utils.get_certificate')
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_verify_invalid_certificate(self, mock_utcnow, mock_get_cert):
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             [
                 'self_signed_cert.pem',
@@ -193,7 +203,9 @@ class TestCertificateUtils(base.TestCase):
     def test_verify_valid_certificate_with_no_root(
         self, mock_utcnow, mock_get_cert
     ):
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
 
         # Test verifying a valid certificate against an empty list of trusted
         # certificates.
@@ -215,7 +227,9 @@ class TestCertificateUtils(base.TestCase):
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_context_init(self, mock_utcnow):
         # Test constructing a context object with a valid set of certificates
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der']
         )
@@ -232,7 +246,9 @@ class TestCertificateUtils(base.TestCase):
         self, mock_utcnow, mock_log
     ):
         # Test constructing a context object with an invalid certificate
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         alt_cert_tuples = [('path', None)]
         context = certificate_utils.CertificateVerificationContext(
             alt_cert_tuples
@@ -246,7 +262,9 @@ class TestCertificateUtils(base.TestCase):
         self, mock_utcnow, mock_log
     ):
         # Test constructing a context object with an non-signing certificate
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         non_signing_cert = self.load_certificate(
             'self_signed_cert_missing_key_usage.pem'
         )
@@ -263,7 +281,9 @@ class TestCertificateUtils(base.TestCase):
         self, mock_utcnow, mock_log
     ):
         # Test constructing a context object with out-of-date certificates
-        mock_utcnow.return_value = datetime.datetime(2100, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2100, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der']
         )
@@ -275,7 +295,9 @@ class TestCertificateUtils(base.TestCase):
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_context_update_with_valid_certificate(self, mock_utcnow):
         # Test updating the context with a valid certificate
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der']
         )
@@ -288,14 +310,18 @@ class TestCertificateUtils(base.TestCase):
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_context_update_with_date_invalid_certificate(self, mock_utcnow):
         # Test updating the context with an out-of-date certificate
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der']
         )
         cert_tuples = [('1', certs[0]), ('2', certs[1])]
         context = certificate_utils.CertificateVerificationContext(cert_tuples)
         cert = self.load_certificate('orphaned_cert.pem')
-        mock_utcnow.return_value = datetime.datetime(2100, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2100, 1, 1, tzinfo=datetime.UTC
+        )
         self.assertRaisesRegex(
             exception.SignatureVerificationError,
             "The certificate is outside its valid date range.",
@@ -320,7 +346,9 @@ class TestCertificateUtils(base.TestCase):
 
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_context_verify(self, mock_utcnow):
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der']
         )
@@ -339,7 +367,9 @@ class TestCertificateUtils(base.TestCase):
 
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_context_verify_disable_checks(self, mock_utcnow):
-        mock_utcnow.return_value = datetime.datetime(2017, 1, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 1, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['self_signed_cert.pem', 'self_signed_cert.der']
         )
@@ -368,7 +398,9 @@ class TestCertificateUtils(base.TestCase):
 
     @mock.patch('oslo_utils.timeutils.utcnow')
     def test_context_verify_invalid_chain_length(self, mock_utcnow):
-        mock_utcnow.return_value = datetime.datetime(2017, 11, 1)
+        mock_utcnow.return_value = datetime.datetime(
+            2017, 11, 1, tzinfo=datetime.UTC
+        )
         certs = self.load_certificates(
             ['grandparent_cert.pem', 'parent_cert.pem', 'child_cert.pem']
         )

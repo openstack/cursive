@@ -35,12 +35,12 @@ def is_within_valid_dates(certificate):
              now, True otherwise.
     """
     # Get now in UTC, since certificate returns times in UTC
-    now = timeutils.utcnow()
+    now = timeutils.utcnow(with_timezone=True)
 
     # Confirm the certificate valid time range includes now
-    if now < certificate.not_valid_before:
+    if now < certificate.not_valid_before_utc:
         return False
-    elif now > certificate.not_valid_after:
+    elif now > certificate.not_valid_after_utc:
         return False
     return True
 

@@ -1,0 +1,12 @@
+---
+fixes:
+  - |
+    Fixed an ``AttributeError`` raised when importing
+    ``cursive.signature_utils`` with ``cryptography`` 47.0.0 or newer.
+    cryptography removed the binary elliptic curves (the ``SECT*`` classes)
+    in 47.0.0 (`pyca/cryptography#14291
+    <https://github.com/pyca/cryptography/pull/14291>`_), but the supported
+    curve list was instantiated eagerly at import time. The list is now built
+    defensively, skipping any curve the installed ``cryptography`` no longer
+    provides. See `LP #2155838
+    <https://bugs.launchpad.net/cursive/+bug/2155838>`_.

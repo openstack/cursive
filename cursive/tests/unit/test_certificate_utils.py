@@ -11,8 +11,8 @@
 #    under the License.
 
 import datetime
-import mock
 import os
+from unittest import mock
 
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509

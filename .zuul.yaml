@@ -1,10 +1,30 @@
 - project:
     templates:
-      - openstack-python3-wallaby-jobs
       - check-requirements
+    # cursive is a branchless library, so a single master branch has to cover
+    # every still-supported release at once. We list the unit test jobs
+    # explicitly (rather than using a per-cycle openstack-python3-*-jobs
+    # template, whose master variant would test the development cycle's
+    # interpreters -- currently py314 -- instead of the supported releases).
+    # py311..py313 are the interpreters that are both shared by the tested
+    # runtimes of 2025.1, 2025.2 and 2026.1 and installable against the master
+    # upper-constraints. The older minima (py39 for 2025.1, py310 for 2025.2
+    # and 2026.1) cannot be installed here because dependencies pinned in the
+    # master upper-constraints already require newer Python (castellan needs
+    # >= 3.10, cmd2 -- via stestr/cliff -- needs >= 3.11); those interpreters
+    # are exercised against each release's own constraints at deploy time.
+    # https://governance.openstack.org/tc/reference/runtimes/
     check:
       jobs:
+        - openstack-tox-pep8
+        - openstack-tox-py311
+        - openstack-tox-py312
+        - openstack-tox-py313
         - barbican-tempest-plugin-simple-crypto-cursive
     gate:
       jobs:
+        - openstack-tox-pep8
+        - openstack-tox-py311
+        - openstack-tox-py312
+        - openstack-tox-py313
         - barbican-tempest-plugin-simple-crypto-cursive

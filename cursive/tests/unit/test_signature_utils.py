@@ -12,7 +12,7 @@
 
 import base64
 import datetime
-import mock
+from unittest import mock
 
 from castellan.common.exception import KeyManagerError
 from castellan.common.exception import ManagedObjectNotFoundError

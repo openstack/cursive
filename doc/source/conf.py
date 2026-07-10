@@ -76,6 +76,6 @@ latex_documents = [
 #intersphinx_mapping = {'http://docs.python.org/': None}
 
 # openstackdocstheme options
-repository_name = 'x/cursive'
+repository_name = 'openstack/cursive'
 bug_project = 'cursive'
 bug_tag = 'docs'

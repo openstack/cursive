@@ -10,7 +10,7 @@ projects for verifying digital signatures. Additional capabilities will be
 added to this project in support of various security features.
 
 * Free software: Apache license
-* Source: https://opendev.org/x/cursive
+* Source: https://opendev.org/openstack/cursive
 * Bugs: http://bugs.launchpad.net/cursive
 
 Features

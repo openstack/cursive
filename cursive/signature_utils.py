@@ -48,15 +48,19 @@ RSA_PSS = 'RSA-PSS'
 # DSA Options
 DSA = 'DSA'
 
-# ECC curves -- note that only those with key sizes >=384 are included
-# Note also that some of these may not be supported by the cryptography backend
-ECC_CURVES = (
-    ec.SECT571K1(),
-    ec.SECT409K1(),
-    ec.SECT571R1(),
-    ec.SECT409R1(),
-    ec.SECP521R1(),
-    ec.SECP384R1(),
+# Binary curves (SECT*) were removed in cryptography 47.0.0; look curves up
+# defensively so import never fails (the loop below skips unsupported ones).
+# (LP: #2155838)
+_ECC_CURVE_NAMES = (
+    'SECT571K1',
+    'SECT409K1',
+    'SECT571R1',
+    'SECT409R1',
+    'SECP521R1',
+    'SECP384R1',
+)
+ECC_CURVES = tuple(
+    getattr(ec, name)() for name in _ECC_CURVE_NAMES if hasattr(ec, name)
 )
 
 # These are the currently supported certificate formats

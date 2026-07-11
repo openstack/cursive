@@ -68,8 +68,7 @@ def is_issuer(issuing_certificate, issued_certificate):
     else:
         try:
             verify_certificate_signature(
-                issuing_certificate,
-                issued_certificate
+                issuing_certificate, issued_certificate
             )
         except cryptography_exceptions.InvalidSignature:
             # If verification fails, an exception is expected.
@@ -92,7 +91,8 @@ def can_sign_certificates(certificate, certificate_uuid=''):
     except x509.extensions.ExtensionNotFound:
         LOG.debug(
             "Certificate '%s' does not have a basic constraints extension.",
-            certificate_uuid)
+            certificate_uuid,
+        )
         return False
 
     try:
@@ -102,7 +102,8 @@ def can_sign_certificates(certificate, certificate_uuid=''):
     except x509.extensions.ExtensionNotFound:
         LOG.debug(
             "Certificate '%s' does not have a key usage extension.",
-            certificate_uuid)
+            certificate_uuid,
+        )
         return False
 
     if basic_constraints.ca and key_usage.key_cert_sign:
@@ -112,12 +113,14 @@ def can_sign_certificates(certificate, certificate_uuid=''):
         LOG.debug(
             "Certificate '%s' is not marked as a CA in its basic constraints "
             "extension.",
-            certificate_uuid)
+            certificate_uuid,
+        )
     if not key_usage.key_cert_sign:
         LOG.debug(
             "Certificate '%s' is not marked for verifying certificate "
             "signatures in its key usage extension.",
-            certificate_uuid)
+            certificate_uuid,
+        )
 
     return False
 
@@ -138,17 +141,21 @@ def verify_certificate_signature(signing_certificate, certificate):
 
     if isinstance(signer_public_key, rsa.RSAPublicKey):
         verifier = verifiers.RSAVerifier(
-            signature_bytes, signature_hash_algorithm,
-            signer_public_key, padding.PKCS1v15(),
+            signature_bytes,
+            signature_hash_algorithm,
+            signer_public_key,
+            padding.PKCS1v15(),
         )
     elif isinstance(signer_public_key, ec.EllipticCurvePublicKey):
         verifier = verifiers.ECCVerifier(
-            signature_bytes, signature_hash_algorithm,
+            signature_bytes,
+            signature_hash_algorithm,
             signer_public_key,
         )
     else:
         verifier = verifiers.DSAVerifier(
-            signature_bytes, signature_hash_algorithm,
+            signature_bytes,
+            signature_hash_algorithm,
             signer_public_key,
         )
 
@@ -156,11 +163,14 @@ def verify_certificate_signature(signing_certificate, certificate):
     verifier.verify()
 
 
-def verify_certificate(context, certificate_uuid,
-                       trusted_certificate_uuids,
-                       enforce_valid_dates=True,
-                       enforce_signing_extensions=True,
-                       enforce_path_length=True):
+def verify_certificate(
+    context,
+    certificate_uuid,
+    trusted_certificate_uuids,
+    enforce_valid_dates=True,
+    enforce_signing_extensions=True,
+    enforce_path_length=True,
+):
     """Validate a certificate against a set of trusted certificates.
 
     From the key manager, load the set of trusted certificates and the
@@ -192,29 +202,33 @@ def verify_certificate(context, certificate_uuid,
                 (uuid, signature_utils.get_certificate(context, uuid))
             )
         except exception.SignatureVerificationError:
-            LOG.warning("Skipping trusted certificate: %(id)s" % {'id': uuid})
+            LOG.warning("Skipping trusted certificate: %s", uuid)
 
     certificate = signature_utils.get_certificate(context, certificate_uuid)
     certificate_context = CertificateVerificationContext(
         trusted_certificates,
         enforce_valid_dates=enforce_valid_dates,
         enforce_signing_extensions=enforce_signing_extensions,
-        enforce_path_length=enforce_path_length
+        enforce_path_length=enforce_path_length,
     )
     certificate_context.update(certificate)
     certificate_context.verify()
 
 
-class CertificateVerificationContext(object):
+class CertificateVerificationContext:
     """A collection of signing certificates.
 
     A collection of signing certificates that may be used to verify the
     signatures of other certificates.
     """
 
-    def __init__(self, certificate_tuples, enforce_valid_dates=True,
-                 enforce_signing_extensions=True,
-                 enforce_path_length=True):
+    def __init__(
+        self,
+        certificate_tuples,
+        enforce_valid_dates=True,
+        enforce_signing_extensions=True,
+        enforce_path_length=True,
+    ):
         self._signing_certificates = []
         for certificate_tuple in certificate_tuples:
             certificate_uuid, certificate = certificate_tuple
@@ -229,7 +243,8 @@ class CertificateVerificationContext(object):
                     LOG.warning(
                         "Certificate '%s' is outside its valid date range and "
                         "cannot be used as a signing certificate.",
-                        certificate_uuid)
+                        certificate_uuid,
+                    )
                     continue
 
             if enforce_signing_extensions:
@@ -238,7 +253,8 @@ class CertificateVerificationContext(object):
                         "Certificate '%s' is not configured to act as a "
                         "signing certificate. It will not be used as a "
                         "signing certificate.",
-                        certificate_uuid)
+                        certificate_uuid,
+                    )
                     continue
             self._signing_certificates.append(certificate_tuple)
 
@@ -314,10 +330,10 @@ class CertificateVerificationContext(object):
                 uuid = certificate_chain[0][0]
                 raise exception.SignatureVerificationError(
                     "Certificate chain building failed. Could not locate the "
-                    "signing certificate for %s in the set of trusted "
-                    "certificates." %
-                    "the base certificate" if uuid == 'base'
-                    else "certificate '%s'" % uuid
+                    "signing certificate for {} in the set of trusted "
+                    "certificates.".format("the base certificate")
+                    if uuid == 'base'
+                    else f"certificate '{uuid}'"
                 )
 
         if self._enforce_path_length:
@@ -337,8 +353,8 @@ class CertificateVerificationContext(object):
                 except x509.extensions.ExtensionNotFound:
                     raise exception.SignatureVerificationError(
                         "Certificate validation failed. The signing "
-                        "certificate '%s' does not have a basic constraints "
-                        "extension." % certificate_chain[i][0]
+                        f"certificate '{certificate_chain[i][0]}' does not "
+                        "have a basic constraints extension."
                     )
 
                 # Path length only applies to non-self-issued intermediate
@@ -349,7 +365,7 @@ class CertificateVerificationContext(object):
                 if constraints.path_length < chain_length:
                     raise exception.SignatureVerificationError(
                         "Certificate validation failed. The signing "
-                        "certificate '%s' is not configured to support "
-                        "certificate chains of sufficient "
-                        "length." % certificate_chain[i][0]
+                        f"certificate '{certificate_chain[i][0]}' is not "
+                        "configured to support certificate chains of "
+                        "sufficient length."
                     )

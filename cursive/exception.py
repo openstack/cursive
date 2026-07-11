@@ -23,6 +23,7 @@ class CursiveException(Exception):
     with the keyword arguments provided to the constructor.
 
     """
+
     msg_fmt = _("An unknown exception occurred.")
     headers = {}
     safe = False
@@ -39,7 +40,7 @@ class CursiveException(Exception):
                 message = self.msg_fmt
 
         self.message = message
-        super(CursiveException, self).__init__(message)
+        super().__init__(message)
 
     def format_message(self):
         # NOTE(dane-fichter): use the first argument to the python Exception
@@ -48,5 +49,4 @@ class CursiveException(Exception):
 
 
 class SignatureVerificationError(CursiveException):
-    msg_fmt = _("Signature verification for the image "
-                "failed: %(reason)s.")
+    msg_fmt = _("Signature verification for the image failed: %(reason)s.")

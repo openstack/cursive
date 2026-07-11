@@ -32,3 +32,21 @@ Repository = "https://opendev.org/openstack/cursive"
 
 [tool.setuptools.packages.find]
 include = ["cursive"]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.format]
+quote-style = "preserve"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["E4", "E5", "E7", "E9", "F", "G", "LOG", "S", "UP"]
+# S105-S107: hardcoded password checks - likely to generate false
+#            positives in a gate environment
+# S607: start process with a partial path - this should be a project
+#       level decision
+ignore = ["S105", "S106", "S107", "S607"]
+
+[tool.ruff.lint.per-file-ignores]
+"cursive/tests/*" = ["S"]

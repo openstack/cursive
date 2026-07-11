@@ -18,7 +18,7 @@ from cryptography.hazmat.primitives.asymmetric import utils
 from cryptography.hazmat.primitives import hashes
 
 
-class RSAVerifier(object):
+class RSAVerifier:
     def __init__(self, signature, hash_method, public_key, padding):
         self._signature = signature
         self._hash_method = hash_method
@@ -35,11 +35,11 @@ class RSAVerifier(object):
             self._signature,
             digest,
             self._padding,
-            utils.Prehashed(self._hash_method)
+            utils.Prehashed(self._hash_method),
         )
 
 
-class ECCVerifier(object):
+class ECCVerifier:
     def __init__(self, signature, hash_method, public_key):
         self._signature = signature
         self._hash_method = hash_method
@@ -54,11 +54,11 @@ class ECCVerifier(object):
         self._public_key.verify(
             self._signature,
             digest,
-            ec.ECDSA(utils.Prehashed(self._hash_method))
+            ec.ECDSA(utils.Prehashed(self._hash_method)),
         )
 
 
-class DSAVerifier(object):
+class DSAVerifier:
     def __init__(self, signature, hash_method, public_key):
         self._signature = signature
         self._hash_method = hash_method
@@ -71,7 +71,5 @@ class DSAVerifier(object):
     def verify(self):
         digest = self._hasher.finalize()
         self._public_key.verify(
-            self._signature,
-            digest,
-            utils.Prehashed(self._hash_method)
+            self._signature, digest, utils.Prehashed(self._hash_method)
         )

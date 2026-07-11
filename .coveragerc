@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = cursive
+omit = cursive/tests/*
+
+[report]
+ignore_errors = True

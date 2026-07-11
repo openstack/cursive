@@ -1,3 +1,34 @@
 [build-system]
 requires = ["pbr>=6.1.1"]
 build-backend = "pbr.build"
+
+[project]
+name = "cursive"
+description = "Cursive implements OpenStack-specific validation of digital signatures."
+readme = "README.rst"
+authors = [
+    {name = "OpenStack", email = "openstack-discuss@lists.openstack.org"},
+]
+license = "Apache-2.0"
+requires-python = ">=3.11"
+classifiers = [
+    "Environment :: OpenStack",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+Homepage = "https://docs.openstack.org/cursive"
+Repository = "https://opendev.org/openstack/cursive"
+
+[tool.setuptools.packages.find]
+include = ["cursive"]

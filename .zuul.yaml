@@ -1,3 +1,5 @@
+---
+
 - project:
     templates:
       - check-requirements
@@ -6,7 +8,21 @@
       - openstack-python3-next-jobs
     check:
       jobs:
-        - barbican-tempest-plugin-simple-crypto-cursive
+        - barbican-tempest-plugin-simple-crypto-cursive:
+            irrelevant-files: &irrelevant-files
+              - ^\.coveragerc$
+              - ^\.gitignore$
+              - ^\.gitreview$
+              - ^\.pre-commit-config\.yaml$
+              - ^\.stestr\.conf$
+              - ^.*\.rst$
+              - ^doc/.*$
+              - LICENSE
+              - ^releasenotes/.*$
+              - ^test-requirements\.txt$
+              - ^tox\.ini$
+              - ^cursive/tests/.*$
     gate:
       jobs:
-        - barbican-tempest-plugin-simple-crypto-cursive
+        - barbican-tempest-plugin-simple-crypto-cursive:
+            irrelevant-files: *irrelevant-files

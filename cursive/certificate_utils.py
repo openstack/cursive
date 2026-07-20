@@ -357,6 +357,9 @@ class CertificateVerificationContext:
                         "have a basic constraints extension."
                     )
 
+                if constraints.path_length is None:
+                    continue
+
                 # Path length only applies to non-self-issued intermediate
                 # certificates. Do not include the current or end certificates
                 # when computing path length.

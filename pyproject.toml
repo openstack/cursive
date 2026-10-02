@@ -34,6 +34,19 @@ Repository = "https://opendev.org/openstack/cursive"
 [tool.setuptools.packages.find]
 include = ["cursive"]
 
+[tool.coverage.run]
+source = [
+    "cursive"
+]
+branch = true
+omit = [
+    "cursive/tests/*"
+]
+
+[tool.coverage.report]
+ignore_errors = true
+show_missing = true
+
 [tool.ruff]
 line-length = 79
 

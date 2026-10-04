@@ -39,6 +39,7 @@ source = [
     "cursive"
 ]
 branch = true
+parallel = true
 omit = [
     "cursive/tests/*"
 ]
